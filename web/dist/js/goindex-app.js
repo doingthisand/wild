@@ -1,26 +1,32 @@
-// Load the necessary static in the head and code from https://github.com/yanzai/goindex
+// Load the necessary static in the head
 document.write('<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/mdui@0.4.3/dist/css/mdui.min.css">');
-// markdown支持
+// markdown Standby
 document.write('<script src="//cdn.jsdelivr.net/npm/markdown-it@10.0.0/dist/markdown-it.min.js"></script>');
-document.write('<style>.mdui-appbar .mdui-toolbar{height:56px;font-size:1pc}.mdui-toolbar>*{padding:0 6px;margin:0 2px}.mdui-toolbar>i{opacity:.5}.mdui-toolbar>.mdui-typo-headline{padding:0 1pc 0 0}.mdui-toolbar>i{padding:0}.mdui-toolbar>a:hover,a.active,a.mdui-typo-headline{opacity:1}.mdui-container{max-width:980px}.mdui-list-item{transition:none}.mdui-list>.th{background-color:initial}.mdui-list-item>a{width:100%;line-height:3pc}.mdui-list-item{margin:2px 0;padding:0}.mdui-toolbar>a:last-child{opacity:1}@media screen and (max-width:980px){.mdui-list-item .mdui-text-right{display:none}.mdui-container{width:100%!important;margin:0}.mdui-toolbar>.mdui-typo-headline,.mdui-toolbar>a:last-child,.mdui-toolbar>i:first-child{display:block}}</style>');
-// add custome theme and darkmode
-if (UI.dark_mode) {
-  document.write(`<style>* {box-sizing: border-box}body{color:rgba(255,255,255,.87);background-color:#333232}.mdui-theme-primary-${UI.main_color} .mdui-color-theme{background-color:#232427!important}</style>`);
-}
+document.write('<style>.mdui-appbar .mdui-toolbar{height:56px;font-size:1pc}.mdui-toolbar>*{padding:0 6px;margin:0 2px}.mdui-toolbar>i{opacity:.5}.mdui-toolbar>.mdui-typo-headline{padding:0 1pc 0 0}.mdui-toolbar>i{padding:0}.mdui-toolbar>a:hover,a.active,a.mdui-typo-headline{opacity:1}.mdui-container{max-width:980px}.mdui-list-item{transition:none}.mdui-list>.th{background-color:initial}.mdui-list-item>a{width:100%;line-height:3pc}.mdui-list-item{margin:2px 0;padding:0}.mdui-toolbar>a:last-child{opacity:1}@media screen and (max-width:980px){.mdui-list-item .mdui-col-sm-3{display:none}.mdui-container{width:100%!important;margin:0}.mdui-toolbar>.mdui-typo-headline,.mdui-toolbar>a:last-child,.mdui-toolbar>i:first-child{display:block}}</style>');
+
+if(dark){document.write('<style>* {box-sizing: border-box}body{color:rgba(255,255,255,.87);background-color:#333232}.mdui-theme-primary-'+main_color+' .mdui-color-theme{background-color:#232427!important}</style>');}
 
 // Initialize the page and load the necessary resources
-function init() {
-  document.siteName = $('title').html();
-  $('body').addClass(`mdui-theme-primary-${UI.main_color} mdui-theme-accent-${UI.accent_color}`);
-  var html = `
-<header class="mdui-appbar mdui-color-theme"> 
-   <div id="nav" class="mdui-toolbar mdui-container${UI.fluid_navigation_bar ? '-fluid' : ''} ${UI.dark_mode ? 'mdui-text-color-white-text' : ''}">
-   </div> 
-</header>
-<div id="content" class="mdui-container"> 
-</div>
-	`;
-  $('body').html(html);
+function init(){
+    document.siteName = $('title').html();
+    $('body').addClass("mdui-theme-primary-"+main_color+" mdui-theme-accent-"+accent_color);
+    var html = "";
+    html += `
+    <header class="mdui-appbar mdui-color-theme">`
+    if(dark){
+        html += `
+        <div id="nav" class="mdui-toolbar mdui-container mdui-text-color-white-text">
+        </div>`;
+    }else{
+        html += `
+        <div id="nav" class="mdui-toolbar mdui-container">
+        </div>`;
+    }
+html += `
+    </header>
+        <div id="content" class="mdui-container"> 
+        </div>`;
+    $('body').html(html);
 }
 
 const Os = {
@@ -51,7 +57,7 @@ function render(path) {
   if (window.MODEL.is_search_page) {
     // Used to store the state of some scroll events
     window.scroll_status = {
-      // Whether the scroll event is bound
+      // Whether the scroll event is already bound
       event_bound: false,
       // "Scroll to the bottom, loading more data" event lock
       loading_lock: false
@@ -60,7 +66,7 @@ function render(path) {
   } else if (path.match(reg) || path.substr(-1) == '/') {
     // Used to store the state of some scroll events
     window.scroll_status = {
-      // Whether the scroll event is bound
+      // Whether the scroll event is already bound
       event_bound: false,
       // "Scroll to the bottom, loading more data" event lock
       loading_lock: false
@@ -72,7 +78,7 @@ function render(path) {
 }
 
 
-// Render title
+// Rendering title
 function title(path) {
   path = decodeURI(path);
   var cur = window.current_drive_order || 0;
@@ -81,7 +87,7 @@ function title(path) {
   // $('title').html(document.siteName + ' - ' + path);
   var model = window.MODEL;
   if (model.is_search_page)
-    $('title').html(`${document.siteName} - ${drive_name} - Search results for ${model.q} `);
+    $('title').html(`${document.siteName} - ${drive_name} - Search Result for ${model.q} `);
   else
     $('title').html(`${document.siteName} - ${drive_name} - ${path}`);
 }
@@ -100,7 +106,7 @@ function nav(path) {
   });
   html += `</ul>`;*/
 
-  // Change to select
+  // change into select
   html += `<select class="mdui-select" onchange="window.location.href=this.value" mdui-select style="overflow:visible;padding-left:8px;padding-right:8px">`;
   names.forEach((name, idx) => {
     html += `<option value="/${idx}:/"  ${idx === cur ? 'selected="selected"' : ''} >${name}</option>`;
@@ -131,7 +137,7 @@ function nav(path) {
                 <i class="mdui-icon material-icons">search</i>
             </button>
             <form id="search_bar_form" method="get" action="/${cur}:search">
-            <input class="mdui-textfield-input" type="text" name="q" placeholder="Search in current drive" value="${search_text}"/>
+            <input class="mdui-textfield-input mdui-text-color-white-text" type="text" name="q" placeholder="Search in current drive" value="${search_text}"/>
             </form>
             <button class="mdui-textfield-close mdui-btn mdui-btn-icon"><i class="mdui-icon material-icons">close</i></button>
         </div>`;
@@ -195,29 +201,28 @@ function requestSearch(params, resultCallback) {
 function list(path) {
   var content = `
 	<div id="head_md" class="mdui-typo" style="display:none;padding: 20px 0;"></div>
-
-	 <div class="mdui-row"> 
-	  <ul class="mdui-list"> 
-	   <li class="mdui-list-item th"> 
+	 <div class="mdui-row">
+	  <ul class="mdui-list">
+	   <li class="mdui-list-item th">
 	    <div class="mdui-col-xs-12 mdui-col-sm-7">
 	     File
 	<i class="mdui-icon material-icons icon-sort" data-sort="name" data-order="more">expand_more</i>
-	    </div> 
+	    </div>
 	    <div class="mdui-col-sm-3 mdui-text-right">
-	     Change the Time
+	     Time
 	<i class="mdui-icon material-icons icon-sort" data-sort="date" data-order="downward">expand_more</i>
-	    </div> 
+	    </div>
 	    <div class="mdui-col-sm-2 mdui-text-right">
 	     Size
 	<i class="mdui-icon material-icons icon-sort" data-sort="size" data-order="downward">expand_more</i>
-	    </div> 
-	    </li> 
-	  </ul> 
-	 </div> 
-	 <div class="mdui-row"> 
-	  <ul id="list" class="mdui-list"> 
-	  </ul> 
-	  <div id="count" class="mdui-hidden mdui-center mdui-text-center mdui-m-b-3 mdui-typo-subheading mdui-text-color-blue-grey-500">Total <span class="number"></span> item</div>
+	    </div>
+	    </li>
+	  </ul>
+	 </div>
+	 <div class="mdui-row">
+	  <ul id="list" class="mdui-list">
+	  </ul>
+	  <div id="count" class="mdui-hidden mdui-center mdui-text-center mdui-m-b-3 mdui-typo-subheading mdui-text-color-blue-grey-500">Total <span class="number"></span> Item</div>
 	 </div>
 	 <div id="readme_md" class="mdui-typo" style="display:none; padding: 20px 0;"></div>
 	`;
@@ -229,10 +234,10 @@ function list(path) {
   $('#head_md').hide().html('');
 
   /**
-    * Callback after the column list request successfully returns data
-    * The result returned by @param res (object)
-    * @param path the requested path
-    * @param prevReqParams parameters used in request
+   * Callback after successful data return from column directory request
+   * @param res Returned result (object)
+   * @param path Requested path
+   * @param prevReqParams Parameters used in the request
    */
   function successResultCallback(res, path, prevReqParams) {
 
@@ -245,7 +250,7 @@ function list(path) {
     $('#spinner').remove();
 
     if (res['nextPageToken'] === null) {
-      // If it is the last page, unbind the scroll event, reset scroll_status, and append the data
+      // If it is the last page, unbind the scroll event, reset scroll_status, and append data
       $(window).off('scroll');
       window.scroll_status.event_bound = false;
       window.scroll_status.loading_lock = false;
@@ -262,15 +267,15 @@ function list(path) {
           // Roll to the bottom
           if (scrollTop + windowHeight > scrollHeight - (Os.isMobile ? 130 : 80)) {
             /*
-                When the event of scrolling to the bottom is triggered, if it is already loading at this time, the event is ignored;
-                Otherwise, go to loading and occupy the loading lock, indicating that loading is in progress
+            When the event of scrolling to the bottom is triggered, if it is already loading at this time, the event is ignored;
+            Otherwise, go to loading and occupy the loading lock, indicating that loading is in progress
              */
             if (window.scroll_status.loading_lock === true) {
               return;
             }
             window.scroll_status.loading_lock = true;
 
-            // Show a loading spinner
+            // Show one loading spinner
             $(`<div id="spinner" class="mdui-spinner mdui-spinner-colorful mdui-center"></div>`)
               .insertBefore('#readme_md');
             mdui.updateSpinners();
@@ -284,7 +289,7 @@ function list(path) {
                 page_index: $list.data('curPageIndex') + 1
               },
               successResultCallback,
-              // The password is the same as before. No authError
+              // The password is the same as before. Will not appear authError
               null
             )
           }
@@ -304,7 +309,7 @@ function list(path) {
     successResultCallback,
     function (path) {
       $('#spinner').remove();
-      var pass = prompt("Directory encryption, please enter the password", "");
+      var pass = prompt("Access Denied, please enter the password", "");
       localStorage.setItem('password' + path, pass);
       if (pass != null && pass != "") {
         list(path);
@@ -315,9 +320,9 @@ function list(path) {
 }
 
 /**
-  * Append the data of the requested new page to the list
-  * @param path
-  * @param files request result
+ * Append the data of the new page requested to the list
+ * @param path path
+ * @param files Requested results
  */
 function append_files_to_list(path, files) {
   var $list = $('#list');
@@ -338,7 +343,7 @@ function append_files_to_list(path, files) {
     item['size'] = formatFileSize(item['size']);
     if (item['mimeType'] == 'application/vnd.google-apps.folder') {
       html += `<li class="mdui-list-item mdui-ripple"><a href="${p}" class="folder">
-	            <div class="mdui-col-xs-12 mdui-col-sm-7 mdui-text-truncate" title="${item.name}">
+	            <div class="mdui-col-xs-12 mdui-col-sm-7 mdui-text-truncate">
 	            <i class="mdui-icon material-icons">folder_open</i>
 	              ${item.name}
 	            </div>
@@ -368,7 +373,7 @@ function append_files_to_list(path, files) {
         c += " view";
       }
       html += `<li class="mdui-list-item file mdui-ripple" target="_blank"><a gd-type="${item.mimeType}" href="${p}" class="${c}">
-	          <div class="mdui-col-xs-12 mdui-col-sm-7 mdui-text-truncate" title="${item.name}">
+	          <div class="mdui-col-xs-12 mdui-col-sm-7 mdui-text-truncate">
 	          <i class="mdui-icon material-icons">insert_drive_file</i>
 	            ${item.name}
 	          </div>
@@ -424,34 +429,33 @@ function append_files_to_list(path, files) {
 }
 
 /**
- * Render the search results list. There is a lot of repetitive code, but there are different logics in it.
+ * Render the search result list. There is a lot of repetitive code, but there are different logics in it.
  */
 function render_search_result_list() {
   var content = `
 	<div id="head_md" class="mdui-typo" style="display:none;padding: 20px 0;"></div>
-
-	 <div class="mdui-row"> 
-	  <ul class="mdui-list"> 
-	   <li class="mdui-list-item th"> 
+	 <div class="mdui-row">
+	  <ul class="mdui-list">
+	   <li class="mdui-list-item th">
 	    <div class="mdui-col-xs-12 mdui-col-sm-7">
-	     Files
+	     File
 	<i class="mdui-icon material-icons icon-sort" data-sort="name" data-order="more">expand_more</i>
-	    </div> 
+	    </div>
 	    <div class="mdui-col-sm-3 mdui-text-right">
-	     Change the Time
+	     Time
 	<i class="mdui-icon material-icons icon-sort" data-sort="date" data-order="downward">expand_more</i>
-	    </div> 
+	    </div>
 	    <div class="mdui-col-sm-2 mdui-text-right">
 	     Size
 	<i class="mdui-icon material-icons icon-sort" data-sort="size" data-order="downward">expand_more</i>
-	    </div> 
-	    </li> 
-	  </ul> 
-	 </div> 
-	 <div class="mdui-row"> 
-	  <ul id="list" class="mdui-list"> 
-	  </ul> 
-	  <div id="count" class="mdui-hidden mdui-center mdui-text-center mdui-m-b-3 mdui-typo-subheading mdui-text-color-blue-grey-500">Total <span class="number"></span> item</div>
+	    </div>
+	    </li>
+	  </ul>
+	 </div>
+	 <div class="mdui-row">
+	  <ul id="list" class="mdui-list">
+	  </ul>
+	  <div id="count" class="mdui-hidden mdui-center mdui-text-center mdui-m-b-3 mdui-typo-subheading mdui-text-color-blue-grey-500">Total <span class="number"></span> Item</div>
 	 </div>
 	 <div id="readme_md" class="mdui-typo" style="display:none; padding: 20px 0;"></div>
 	`;
@@ -462,10 +466,10 @@ function render_search_result_list() {
   $('#head_md').hide().html('');
 
   /**
-    * Callback after successful search request returns data
-    * The result returned by @param res (object)
-    * @param path the requested path
-    * @param prevReqParams parameters used in request
+   * The callback after the search request successfully returns data
+   * @param res Results returned(object)
+   * @param path Requested path
+   * @param prevReqParams Parameters used in the request
    */
   function searchSuccessCallback(res, prevReqParams) {
 
@@ -474,11 +478,11 @@ function render_search_result_list() {
       .data('nextPageToken', res['nextPageToken'])
       .data('curPageIndex', res['curPageIndex']);
 
-    // Remove loading spinner
+    // Removeloading spinner
     $('#spinner').remove();
 
     if (res['nextPageToken'] === null) {
-      // If it is the last page, unbind the scroll event, reset scroll_status, and append the data
+      // If it is the last page, unbind the scroll event, reset scroll_status, and append data
       $(window).off('scroll');
       window.scroll_status.event_bound = false;
       window.scroll_status.loading_lock = false;
@@ -495,15 +499,15 @@ function render_search_result_list() {
           // Roll to the bottom
           if (scrollTop + windowHeight > scrollHeight - (Os.isMobile ? 130 : 80)) {
             /*
-		 When the event of scrolling to the bottom is triggered, if it is already loading at this time, the event is ignored;
-                 Otherwise, go to loading and occupy the loading lock, indicating that loading is in progress
+            When the event of scrolling to the bottom is triggered, if it is already loading at this time, the event is ignored;
+            Otherwise, go to loading and occupy the loading lock, indicating that loading is in progress
              */
             if (window.scroll_status.loading_lock === true) {
               return;
             }
             window.scroll_status.loading_lock = true;
 
-            // Show a loading spinner
+            // Show one loading spinner
             $(`<div id="spinner" class="mdui-spinner mdui-spinner-colorful mdui-center"></div>`)
               .insertBefore('#readme_md');
             mdui.updateSpinners();
@@ -556,7 +560,7 @@ function append_search_result_to_list(files) {
     item['size'] = formatFileSize(item['size']);
     if (item['mimeType'] == 'application/vnd.google-apps.folder') {
       html += `<li class="mdui-list-item mdui-ripple"><a id="${item['id']}" onclick="onSearchResultItemClick(this)" class="folder">
-	            <div class="mdui-col-xs-12 mdui-col-sm-7 mdui-text-truncate" title="${item.name}">
+	            <div class="mdui-col-xs-12 mdui-col-sm-7 mdui-text-truncate">
 	            <i class="mdui-icon material-icons">folder_open</i>
 	              ${item.name}
 	            </div>
@@ -571,7 +575,7 @@ function append_search_result_to_list(files) {
         c += " view";
       }
       html += `<li class="mdui-list-item file mdui-ripple" target="_blank"><a id="${item['id']}" gd-type="${item.mimeType}" onclick="onSearchResultItemClick(this)" class="${c}">
-	          <div class="mdui-col-xs-12 mdui-col-sm-7 mdui-text-truncate" title="${item.name}">
+	          <div class="mdui-col-xs-12 mdui-col-sm-7 mdui-text-truncate">
 	          <i class="mdui-icon material-icons">insert_drive_file</i>
 	            ${item.name}
 	          </div>
@@ -608,20 +612,20 @@ function onSearchResultItemClick(a_ele) {
   });
   mdui.updateSpinners();
 
-  // Request a path
+  // Request to get the path
   $.post(`/${cur}:id2path`, {id: a_ele.id}, function (data) {
     if (data) {
       dialog.close();
       var href = `/${cur}:${data}${can_preview ? '?a=view' : ''}`;
       dialog = mdui.dialog({
-        title: '<i class="mdui-icon material-icons">&#xe815;</i>Target path',
+        title: '<i class="mdui-icon material-icons">☞ </i>Target path',
         content: `<a href="${href}">${data}</a>`,
         history: false,
         modal: true,
         closeOnEsc: true,
         buttons: [
           {
-            text: 'turn on', onClick: function () {
+            text: 'Open', onClick: function () {
               window.location.href = href
             }
           }, {
@@ -629,15 +633,15 @@ function onSearchResultItemClick(a_ele) {
               window.open(href)
             }
           }
-          , {text: 'cancel'}
+          , {text: 'Cancel'}
         ]
       });
       return;
     }
     dialog.close();
     dialog = mdui.dialog({
-      title: '<i class="mdui-icon material-icons">&#xe811;</i> Failed to get the target path',
-      content: 'It may be because this item does not exist in the disc! It may also be because the file [Shared with me] has not been added to Personal Drive!',
+      title: '<i class="mdui-icon material-icons">&#xe811;</i>Failed to get the target path',
+      content: 'o(╯□╰)o It may be because this item does not exist in the disk! It may also be because the file [Shared with me] has not been added to Personal Drive!',
       history: false,
       modal: true,
       closeOnEsc: true,
@@ -662,7 +666,7 @@ function get_file(path, file, callback) {
 }
 
 
-// File display ?a=view
+// File display? A = view
 function file(path) {
   var name = path.split('/').pop();
   var ext = name.split('.').pop().toLowerCase().replace(`?a=view`, "").toLowerCase();
@@ -715,7 +719,6 @@ function file_code(path) {
 	<input class="mdui-textfield-input" type="text" value="${href}"/>
 </div>
 <a href="${href}" class="mdui-fab mdui-fab-fixed mdui-ripple mdui-color-theme-accent"><i class="mdui-icon material-icons">file_download</i></a>
-
 <script src="https://cdn.staticfile.org/ace/1.4.7/ace.js"></script>
 <script src="https://cdn.staticfile.org/ace/1.4.7/ext-language_tools.js"></script>
 	`;
@@ -741,7 +744,6 @@ function file_code(path) {
     });
   });
 }
-
 function copyToClipboard(str) {
   const $temp = $("<input>");
   $("body").append($temp);
@@ -749,10 +751,9 @@ function copyToClipboard(str) {
   document.execCommand("copy");
   $temp.remove();
 }
-
 // Document display video |mp4|webm|avi|
 function file_video(path) {
-  const url = window.location.origin + path;
+ const url = window.location.origin + path;
   let player_items = [
     {
       text: 'MXPlayer(Free)',
@@ -781,11 +782,13 @@ function file_video(path) {
                    <li class="mdui-menu-item"><a id="copy-link" class="mdui-ripple">Copy Link</a></li>`;
   const playBtn = `
       <button class="mdui-btn mdui-ripple mdui-color-theme-accent" mdui-menu="{target:'#player-items'}">
-        <i class="mdui-icon material-icons">&#xe039;</i>Play from external player<i class="mdui-icon material-icons">&#xe5cf;</i>
+        <i class="mdui-icon material-icons">&#xe039;</i>Play From External Player<i class="mdui-icon material-icons">&#xe5cf;</i>
       </button>
+      
       <ul class="mdui-menu" id="player-items">${player_items}</ul>`;
 
   const content = `
+  
 <div class="mdui-container-fluid">
 	<br>
 	<video class="mdui-video-fluid mdui-center" preload controls>
@@ -798,7 +801,7 @@ function file_video(path) {
 	  <input class="mdui-textfield-input" type="text" value="${url}"/>
 	</div>
 	<div class="mdui-textfield">
-	  <label class="mdui-textfield-label">HTML Reference address</label>
+	  <label class="mdui-textfield-label">HTML Refrence Adress</label>
 	  <textarea class="mdui-textfield-input"><video><source src="${url}" type="video/mp4"></video></textarea>
 	</div>
 </div>
@@ -807,7 +810,7 @@ function file_video(path) {
   $('#content').html(content);
   $('#copy-link').on('click', () => {
     copyToClipboard(url);
-    mdui.snackbar('Copied to clipboard!');
+    mdui.snackbar('Copied To Clipboard!');
   });
 }
 
@@ -823,7 +826,7 @@ function file_audio(path) {
 	<br>
 	<!-- Fixed label -->
 	<div class="mdui-textfield">
-	  <label class="mdui-textfield-label">Download Link</label>
+	  <label class="mdui-textfield-label">Download link</label>
 	  <input class="mdui-textfield-input" type="text" value="${url}"/>
 	</div>
 	<div class="mdui-textfield">
@@ -848,7 +851,7 @@ function file_pdf(path) {
   $('#content').removeClass('mdui-container').addClass('mdui-container-fluid').css({padding: 0}).html(content);
 }
 
-// image display
+// picture display
 function file_image(path) {
   var url = window.location.origin + path;
   // console.log(window.location.pathname)
@@ -885,7 +888,7 @@ function file_image(path) {
                     </div>
                     <div class="mdui-col">
                         ${next_child ? `<button id="rightBtn"  data-filepath="${next_child}" class="mdui-btn mdui-btn-block mdui-color-theme-accent mdui-ripple">Next</button>` : `<button class="mdui-btn mdui-btn-block mdui-color-theme-accent mdui-ripple" disabled>Next</button>`}
-                    </div> 
+                    </div>
                 </div>
             </div>
             `;
@@ -904,7 +907,7 @@ function file_image(path) {
     </div>
 	<br>
 	<div class="mdui-textfield">
-	  <label class="mdui-textfield-label">Download Link</label>
+	  <label class="mdui-textfield-label">Download link</label>
 	  <input class="mdui-textfield-input" type="text" value="${url}"/>
 	</div>
 	<div class="mdui-textfield">
@@ -919,7 +922,7 @@ function file_image(path) {
 </div>
 <a href="${url}" class="mdui-fab mdui-fab-fixed mdui-ripple mdui-color-theme-accent"><i class="mdui-icon material-icons">file_download</i></a>
     `;
-  // my code
+  //my code
   $('#content').html(content);
   $('#leftBtn, #rightBtn').click((e) => {
     let target = $(e.target);
@@ -928,13 +931,13 @@ function file_image(path) {
     }
     const filepath = target.attr('data-filepath');
     const direction = target.attr('data-direction');
-    //console.log(`${direction}Turn page ${filepath}`);
+    //console.log (`$ {direction} turn page $ {filepath}`);
     file(filepath)
   });
 }
 
 
-// Time conversion
+//Time conversion
 function utc2beijing(utc_datetime) {
   // Convert to normal time format year-month-day hour: minute: second
   var T_pos = utc_datetime.indexOf('T');
@@ -948,8 +951,8 @@ function utc2beijing(utc_datetime) {
   timestamp = timestamp.getTime();
   timestamp = timestamp / 1000;
 
-  // 8 hours increase, Beijing time is eight more time zones than UTC time
-  var unixtimestamp = timestamp + 5.5 * 60 * 60;
+  // 8 hours more, Beijing time is eight more time zones than UTC time
+  var unixtimestamp = timestamp + 8 * 60 * 60;
 
   // Timestamp to time
   var unixtimestamp = new Date(unixtimestamp * 1000);
@@ -965,7 +968,7 @@ function utc2beijing(utc_datetime) {
     + second.substring(second.length - 2, second.length);
 }
 
-// bytes adaptive conversion to KB, MB, GB
+// bytes Adaptive conversion to KB, MB, GB
 function formatFileSize(bytes) {
   if (bytes >= 1000000000) {
     bytes = (bytes / 1000000000).toFixed(2) + ' GB';
@@ -991,7 +994,7 @@ String.prototype.trim = function (char) {
 };
 
 
-// README.md HEAD.md support
+// README.md HEAD.md stand by
 function markdown(el, data) {
   if (window.md == undefined) {
     //$.getScript('https://cdn.jsdelivr.net/npm/markdown-it@10.0.0/dist/markdown-it.min.js',function(){
@@ -1020,7 +1023,6 @@ $(function () {
       render(url);
       return false;
   });
-
   $("body").on("click", '.view', function () {
       var url = $(this).attr('href');
       history.pushState(null, null, url);
